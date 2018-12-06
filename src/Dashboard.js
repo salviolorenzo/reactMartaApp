@@ -12,17 +12,19 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    fetch(
-      'https://my-little-cors-proxy.herokuapp.com/http://developer.itsmarta.com/RealtimeTrain/RestServiceNextTrain/GetRealtimeArrivals?apikey=2c514350-0c26-47dd-b872-7936af81c8e1'
-    )
-      .then(r => r.json())
-      .then(array => {
-        let newArray = array;
-        this.setState({
-          items: newArray,
-          focus: newArray
+    setInterval(() => {
+      fetch(
+        'https://my-little-cors-proxy.herokuapp.com/http://developer.itsmarta.com/RealtimeTrain/RestServiceNextTrain/GetRealtimeArrivals?apikey=2c514350-0c26-47dd-b872-7936af81c8e1'
+      )
+        .then(r => r.json())
+        .then(array => {
+          let newArray = array;
+          this.setState({
+            items: newArray,
+            focus: newArray
+          });
         });
-      });
+    }, 10000);
   }
 
   _onSubmit(event) {
@@ -40,12 +42,22 @@ class Dashboard extends Component {
   }
 
   render() {
-    return (
-      <div>
-        <Selector onSubmit={this._onSubmit.bind(this)} />
-        <TrainInfo array={this.state.focus} />
-      </div>
-    );
+    if (this.state.items.length === 0) {
+      return (
+        <div className="dashboard">
+          <h1>MartaMartaMarta</h1>
+          <h3>Loading...</h3>
+        </div>
+      );
+    } else {
+      return (
+        <div className="dashboard">
+          <h1>MartaMartaMarta</h1>
+          <Selector onSubmit={this._onSubmit.bind(this)} />
+          <TrainInfo array={this.state.focus} />
+        </div>
+      );
+    }
   }
 }
 
